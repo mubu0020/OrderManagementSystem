@@ -18,17 +18,39 @@ public class SQLiteCustomerRepository : ICustomerRepository
         using var connection = new SqliteConnection(ConnectionString);
         connection.Open();
 
-        var command = connection.CreateCommand();
-        command.CommandText =
+        var createCommand = connection.CreateCommand();
+        createCommand.CommandText =
         """
         CREATE TABLE IF NOT EXISTS Customers (
-            Id INTEGER PRIMARY KEY,
-            Name TEXT NOT NULL,
-            Email TEXT NOT NULL
+        Id INTEGER PRIMARY KEY,
+        Name TEXT NOT NULL,
+        Email TEXT NOT NULL
         );
         """;
 
-        command.ExecuteNonQuery();
+        createCommand.ExecuteNonQuery();
+
+        SeedData(connection);
+    }
+
+    private void SeedData(SqliteConnection connection)
+    {
+        var checkCommand = connection.CreateCommand();
+        checkCommand.CommandText = "SELECT COUNT(*) FROM Customers;";
+        var count = (long)checkCommand.ExecuteScalar();
+
+        if (count > 0)
+            return;
+
+        var insertCommand = connection.CreateCommand();
+        insertCommand.CommandText =
+        """
+        INSERT INTO Customers (Id, Name, Email) VALUES
+        (1, 'Alice Johnson', 'alice@example.com'),
+        (2, 'Bob Smith', 'bob@example.com');
+        """;
+
+        insertCommand.ExecuteNonQuery();
     }
 
     public void Add(Customer customer)
