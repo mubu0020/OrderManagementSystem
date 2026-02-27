@@ -60,8 +60,7 @@ public class OrderService
 
     
     /* Adds a product to an existing order.
-     This method orchestrates retrieval of both order and product
-     before delegating invariant enforcement to the Order aggregate.
+   
    */
     public void AddProductToOrder(int orderId, int productId, int quantity, int orderLineId)
     {
